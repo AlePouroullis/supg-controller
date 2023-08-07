@@ -27,17 +27,20 @@ tripod_gait = [	0.15, 0, 0.05, 0.5, 0.5, # leg 1
 leg_params = np.array(tripod_gait).reshape(6, 5)
 
 
-#read in pickl
-with open(r"Pickles/SUPG_xor_cppn_testECSUPG11.pkl", 'rb') as f:
-    CPPN = pickle.load(f)
+if __name__ == '__main__':
+    #read in pickle
+    import sys 
+    pickleFile = sys.argv[1]
+    with open(r"Pickles/" + pickleFile, 'rb') as f:
+        CPPN = pickle.load(f)
 
-    #set up final controller and feed into sim
-    #dictate which legs are broken
-    broken =[] 
-    brokenS = []
-    controller = SUPGController(CPPN, broken)
-    simulator = Simulator(controller, follow=True, visualiser=True, collision_fatal=False, failed_legs=brokenS)
+        #set up final controller and feed into sim
+        #dictate which legs are broken
+        broken =[] 
+        brokenS = []
+        controller = SUPGController(CPPN, broken)
+        simulator = Simulator(controller, follow=True, visualiser=True, collision_fatal=False, failed_legs=brokenS)
 
-    # run indefinitely
-    while True:
-        simulator.step()
+        # run indefinitely
+        while True:
+            simulator.step()

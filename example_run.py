@@ -72,13 +72,23 @@ def evaluate_gait(genomes, config, duration=5):
             
         # Initialise Simulator
         simulator = Simulator(controller=controller, visualiser=False, collision_fatal=False)
+
+
+        contact_sequence = np.full((6, 0), False)
+        previous_contact_state = simulator.get_supporting_legs()
+        total_contact_changes = np.zeros(6)  # Initialize counter for each leg
         # Step in simulator
         for t in np.arange(0, duration, step=simulator.dt):
             try:
                 simulator.step()
             except RuntimeError as collision:
                 fitness = 0, np.zeros(6)
+            current_contact_state = simulator.get_supporting_legs()
+            total_contact_changes += np.abs(previous_contact_state - current_contact_state)
+            previous_contact_state = current_contact_state
+            contact_sequence = np.append(contact_sequence, current_contact_state.reshape(-1, 1), axis=1)
         fitness = simulator.base_pos()[0]  # distance travelled along x axis
+        fitness -= np.mean(total_contact_changes) / (duration / simulator.dt)  # Penalize high-frequency movement
         # Terminate Simulator
         simulator.terminate()
         # Assign fitness to genome

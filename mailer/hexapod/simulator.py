@@ -182,10 +182,10 @@ class Simulator:
         This will request the joint angles and speeds from the assigned controller
 
         """
+
 		start_time = time.perf_counter()
 		# using setJointMotorControl2 (slightly slower but allows setting of max velocity)
 		contact = self.get_supporting_legs()
-
 		joint_angles = self.controller.joint_angles(contact, t=self.t)
 
 		for index, joint_properties in enumerate(self.joints):

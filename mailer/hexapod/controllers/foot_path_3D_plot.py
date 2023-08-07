@@ -7,9 +7,9 @@ import matplotlib
 
 # matplotlib.use("pgf")
 matplotlib.rcParams.update({
-    "pgf.texsystem": "pdflatex",
+    # "pgf.texsystem": "pdflatex",
     'font.family': 'serif',
-    'text.usetex': True,
+    # 'text.usetex': True,
     'pgf.rcfonts': False,
 })
 

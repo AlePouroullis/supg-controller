@@ -13,7 +13,7 @@ tripod_gait = [	0.15, 0, 0.05, 0.5, 0.5, # leg 1
 
 class SUPGController1:
 
-    def __init__(self, cppn, params=tripod_gait, body_height=0.15, period=1.0, velocity=0.46, crab_angle=0.0, dt=1/240):
+    def __init__(self, cppn, brokenLegs, params=tripod_gait, body_height=0.15, period=1.0, velocity=0.46, crab_angle=0.0, dt=1/240):
         # link lengths
         self.l_1 = 0.05317
         self.l_2 = 0.10188
@@ -23,6 +23,7 @@ class SUPGController1:
         self.velocity = velocity
         self.crab_angle = crab_angle
         self.body_height = body_height
+        self.brokenLegs = brokenLegs
 
         self.wavelength = 100 # SUPG-Wavelength
         self.supgOutputs = [] #Cache CPPN outputs
@@ -33,13 +34,24 @@ class SUPGController1:
         self.initialOutputs = []
 
         for i in range(6):
-            #all three servos
-            self.initialOutputs.append(0)
-            self.initialOutputs.append(0.8994219)
-            self.initialOutputs.append(-1.487756)
-            #just the supgs for caching output
-            self.supgOutputs.append(0)
-            self.supgOutputs.append(0.8994219)
+       #if in broken leg array, set to fixed position
+            if (i in self.brokenLegs):
+                #all three servos
+                self.initialOutputs.append(np.radians(0))
+                self.initialOutputs.append(np.radians(90))
+                self.initialOutputs.append(np.radians(-150))
+                #just the supgs for caching output
+                self.supgOutputs.append(np.radians(0))
+                self.supgOutputs.append(np.radians(90))
+            #otherwise, continue as normal
+            else:
+                #all three servos
+                self.initialOutputs.append(0)
+                self.initialOutputs.append(0.8994219)
+                self.initialOutputs.append(-1.487756)
+                #just the supgs for caching output
+                self.supgOutputs.append(0)
+                self.supgOutputs.append(0.8994219)
 
     def setCoordinates(self):
         #create nodes
@@ -80,8 +92,8 @@ class SUPGController1:
         inputs.append(neuron.getYPos())#/50) #uses y angle to ensure all servos on same leg move at same time
         inputs.append(0)
         #append 0 for all other supgs
-        # for i in range(12):
-        #     inputs.append(0)
+        for i in range(12):
+            inputs.append(0)
 
         activation = self.cppn.activate(inputs)
         offset = (activation[1] + 1)

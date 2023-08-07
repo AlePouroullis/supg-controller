@@ -15,7 +15,7 @@ tripod_gait = [	0.15, 0, 0.05, 0.5, 0.5, # leg 1
 
 class SUPGController:
 
-    def __init__(self, cppn, brokenLegs, params=tripod_gait, body_height=0.15, period=1.0, velocity=0.46, crab_angle=0.0, dt=1/240):
+    def __init__(self, cppn, brokenLegs, params=tripod_gait, body_height=0.11, period=1.0, velocity=0.1, crab_angle=np.pi/6, dt=1/240):
         # link lengths
         self.l_1 = 0.05317
         self.l_2 = 0.10188
@@ -41,7 +41,7 @@ class SUPGController:
         self.supgOutputs = [] #Cache CPPN outputs
         self.cppn = cppn
         self.neuronList = []
-        self.firstStep = False
+        self.firstStep = True
         self.setCoordinates()
         self.initialOutputs = []
 
@@ -171,7 +171,7 @@ class SUPGController:
             return NewValue
             
     #query each supg for output, cache output in an array, then output angles to correct joints
-    def get_joint_angles(self, contact, t):
+    def joint_angles(self, contact, t):
         outputs = []
 
         #set up initial standing position
@@ -181,11 +181,11 @@ class SUPGController:
     
             #set timer to offset to kickstart legs/avoid pronk
             #legs where offset == true , remain at T = zero
-            if(self.firstStep == False):
+            if(self.firstStep == True):
                 for neuron in self.neuronList:
                     neuron.setTimeCounter(self.getOffset(neuron))
                     
-                self.firstStep = True
+                self.firstStep = False
 
             #if first step is completele, use triggers 
             else:

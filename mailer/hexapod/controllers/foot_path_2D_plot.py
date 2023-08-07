@@ -6,9 +6,9 @@ import matplotlib
 
 # matplotlib.use("pgf")
 matplotlib.rcParams.update({
-    "pgf.texsystem": "pdflatex",
+    # "pgf.texsystem": "pdflatex",
     'font.family': 'serif',
-    'text.usetex': True,
+    # 'text.usetex': True,
     'pgf.rcfonts': False,
 })
 
@@ -51,6 +51,6 @@ plt.legend()
 
 fig.tight_layout()
 
-plt.savefig('../../Final Report/figures/foot_traj_plot.pdf')
+# plt.savefig('../../Final Report/figures/foot_traj_plot.pdf')
 
-# plt.show()
+plt.show()
